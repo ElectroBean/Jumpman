@@ -27,6 +27,7 @@ this.sprite.setAnimationOffset(i, -55, -87);
 	this.shootTimer = 0;
 	this.cooldownTimer = 0;
 	this.climbing = false; 
+	this.wasJumping = false;
 };
 
 var LEFT = 0;
@@ -41,7 +42,7 @@ var ANIM_CLIMB = 6;
 var ANIM_SHOOT_RIGHT = 7;
 var ANIM_SHOOT_LEFT = 8;
 var ANIM_MAX = 9;
-var jumps = 3;
+var jumps = 2;
 
 Player.prototype.update = function(deltaTime)
 {
@@ -49,7 +50,6 @@ Player.prototype.update = function(deltaTime)
  var left = false;
  var right = false;
  var jump = false;
- var iamjumping = false;
 
  // check keypress events
  if(keyboard.isKeyDown(keyboard.KEY_LEFT) == true) {
@@ -77,10 +77,10 @@ Player.prototype.update = function(deltaTime)
 	 }
  }
  
- if(keyboard.isKeyDown(keyboard.KEY_SHIFT) == true){
+ if(keyboard.isKeyDown(keyboard.KEY_UP) == true){
 	 jump = true; 
 	 this.jumping = true; 
-	 
+	
  }
  
  if(jump == true && this.direction == LEFT && this.sprite.currentAnimation != ANIM_JUMP_LEFT){
@@ -106,18 +106,18 @@ ddx = ddx + ACCEL; // player wants to go right
 else if (wasright)
 ddx = ddx - FRICTION; // player was going right, but not any more
  
-if (jump == true && jumps > 1)
+if (jump == true && jumps > 0 && this.wasJumping == false)
 {
 	ddy = ddy - JUMP;
 	this.jumping = true;
 	jumps -= 1;
 
 }
-else if(jump == true && jumps == 1){
-	ddy = ddy - JUMP; 
-	this.jumping = true; 
-	jumps = 0;
-}
+// else if(jump == true && jumps == 1){
+	// ddy = ddy - JUMP; 
+	// this.jumping = true; 
+	// jumps = 0;
+// }
 
 this.position.y = Math.round(this.position.y + (deltaTime * this.velocity.y));
 this.position.x = Math.round(this.position.x + (deltaTime * this.velocity.x));
@@ -145,7 +145,7 @@ if ((celldown && !cell) || (celldiag && !cellright && nx)) {
  this.falling = false; // no longer falling
  this.jumping = false; // (or jumping)
  ny = 0; // no longer overlaps the cells below 
- jumps = 3; 
+ jumps = 2; 
 }
  }
  else if (this.velocity.y < 0) {
@@ -174,8 +174,6 @@ this.velocity.x = 0; // stop horizontal velocity
 }
 }
 /////////////////////////////////////////////////////////////////////
-
-if(this.lives >= 1){
 
 var tx = pixelToTile(this.position.x);
 var ty = pixelToTile(this.position.y);
@@ -222,20 +220,22 @@ this.velocity.x = 0;
  gameState = STATE_LIFELOST;
 }
 }
-}
+this.wasJumping = jump;
+
 //////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////
-if(this.lives <= 0){
-	gameState = STATE_GAMEOVER;
-}
-
-if(triggerAtTileCoord(LAYER_TRIGGERS, tx, ty) == true)
+if(triggerAtTileCoord(LAYER_TRIGGERS, tx, ty) == true && level == 1)
 {
-gameState = STATE_GAMEOVER; 
-win = true;
+level = 2;
+initialize();
+player.position.set (0, 0);
+}
+else if(triggerAtTileCoord(LAYER_TRIGGERS, tx, ty) == true && level == 2){
+	gameState = STATE_GAMEOVER;
+	win = true;
 }
 }
 

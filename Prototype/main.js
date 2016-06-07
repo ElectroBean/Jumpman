@@ -53,10 +53,11 @@ var enemies = [];
 var boss = [];
 
 var LAYER_COUNT = level1.layers.length;
-var LAYER_PLATFORMS = 0;
-var LAYER_DEATHONTOUCH = 1;
-var LAYER_TRIGGERS = 2;
-var LAYER_MAX = 3; 
+var LAYER_BACKGROUND = 0
+var LAYER_PLATFORMS = 1;
+var LAYER_DEATHONTOUCH = 2;
+var LAYER_TRIGGERS = 3;
+var LAYER_MAX = 4; 
 
 var MAP = {tw: level1.width, th: level1.height};
 var TILE = level1.tilewidth;
@@ -80,6 +81,8 @@ var ENEMY_ACCEL = ENEMY_MAXDX * 2;
 var BOSS_MAXDX = METER * 5;
 var BOSS_ACCEL = BOSS_MAXDX * 2;
 var score = 0;
+
+var level = 1;
 
 function cellAtPixelCoord(layer, x,y)
 {
@@ -130,7 +133,7 @@ return value;
 
 function drawMap()
 {
-	
+	if(level == 1){
 for(var layerIdx=0; layerIdx<LAYER_COUNT; layerIdx++)
 {
 	if(level1.layers[layerIdx].visible == false) continue;
@@ -153,12 +156,37 @@ idx++;
 }
 }
 }
+else if(level == 2){
+for(var layerIdx=0; layerIdx<LAYER_COUNT; layerIdx++)
+{
+	if(level2.layers[layerIdx].visible == false) continue;
+var idx = 0;
+for( var y = 0; y < level2.layers[layerIdx].height; y++ )
+{
+for( var x = 0; x < level2.layers[layerIdx].width; x++ )
+{
+if( level2.layers[layerIdx].data[idx] != 0 )
+{
+// the tiles in the Tiled map are base 1 (meaning a value of 0 means no tile), so subtract one from the tileset id to get the
+// correct tile
+var tileIndex = level2.layers[layerIdx].data[idx] - 1;
+var sx = TILESET_PADDING + (tileIndex % TILESET_COUNT_X) * (TILESET_TILE + TILESET_SPACING);
+var sy = TILESET_PADDING + (Math.floor(tileIndex / TILESET_COUNT_Y)) * (TILESET_TILE + TILESET_SPACING);
+context.drawImage(tileset, sx, sy, TILESET_TILE, TILESET_TILE, x*TILE, (y-1)*TILE, TILESET_TILE, TILESET_TILE);
+}
+idx++;
+}
+}
+}
+}
+}
 
 var musicBackround;
 var sfxFire;
 
 var cells = []; // the array that holds our simplified collision data
 function initialize() {
+	if(level == 1){
  for(var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++) { // initialize the collision map
  cells[layerIdx] = [];
  var idx = 0;
@@ -181,7 +209,31 @@ cells[layerIdx][y][x+1] = 1;
  idx++;
  }
  }
+	}}
+else if(level == 2){
+ for(var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++) { // initialize the collision map
+ cells[layerIdx] = [];
+ var idx = 0;
+ for(var y = 0; y < level2.layers[layerIdx].height; y++) {
+ cells[layerIdx][y] = [];
+ for(var x = 0; x < level2.layers[layerIdx].width; x++) {
+ if(level2.layers[layerIdx].data[idx] != 0) {
+ // for each tile we find in the layer data, we need to create 4 collisions
+ // (because our collision squares are 35x35 but the tile in the
+// level are 70x70)
+ cells[layerIdx][y][x] = 1;
+cells[layerIdx][y-1][x] = 1;
+cells[layerIdx][y-1][x+1] = 1;
+cells[layerIdx][y][x+1] = 1;
  }
+ else if(cells[layerIdx][y][x] != 1) {
+// if we haven't set this cell's value, then set it to 0 now
+ cells[layerIdx][y][x] = 0;
+}
+ idx++;
+ }
+ }
+	}}
 }
 
 function run()
@@ -202,6 +254,9 @@ runGameOver(deltaTime);
 break;
 case STATE_LIFELOST:
 runLifeLost(deltaTime);
+break;
+case STATE_LEVEL2:
+runLevel2(deltaTime);
 break;
 }
 //end run
@@ -422,10 +477,6 @@ var win = false;
 var firstGameOver = true; 
 var gotHighScore = false;
 function runGameOver(){
-	context.drawImage(gameBackground, 0, 0);
-	
-	context.fillStyle = "black";
-	context.fillRect(0, SCREEN_HEIGHT/2 - 42, 1000, 120)
 	
 	if(firstGameOver == true){
 		firstGameOver = false; 
@@ -441,41 +492,26 @@ function runGameOver(){
 	if(win == false){
 	context.font = "32px Franklin";
 	context.textAling = "center"; 
-	context.fillStyle = "gold";
+	context.fillStyle = "Black";
 	context.fillText("You seem to have lost. Nice work!", SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
 	}
 	if(score == 0 && win == false){
 	context.font = "32px Franklin";
 	context.textAling = "center"; 
-	context.fillStyle = "gold";
+	context.fillStyle = "Black";
 	context.fillText("You literally scored 0, you suck, go home.", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 50);
 	}
 	if(score > 0 && win == false){
 	context.font = "32px Franklin";
 	context.textAling = "center"; 
-	context.fillStyle = "gold";
+	context.fillStyle = "Black";
 	context.fillText("You scored, " +score + ", nice job!", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 50);
 	}
 	if(score >= 0 && win == true){
 	context.font = "32px Franklin";
 	context.textAling = "center"; 
-	context.fillStyle = "gold";
-	context.fillText("You won!!! You scored: " +score, SCREEN_WIDTH/2, SCREEN_HEIGHT/2); 
-	
-	context.font = "16.5px Franklin";
-	context.textAling = "center"; 
-	context.fillStyle = "gold";
-	context.fillText("Prepare for the sequel: The Bats Strike Back", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 20); 
-	
-	context.font = "16.5px Franklin";
-	context.textAling = "center"; 
-	context.fillStyle = "gold";
-	context.fillText("And the sequel to the sequel: Return of the Chucks", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 40); 
-	
-	context.font = "12px Franklin";
-	context.textAling = "center"; 
-	context.fillStyle = "gold";
-	context.fillText("Dont forget the prequels: The Phantom Bat, Attack of the Semi-Giant Bats, and Revenge of the Bats", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 60); 
+	context.fillStyle = "Black";
+	context.fillText("You won", SCREEN_WIDTH/2, SCREEN_HEIGHT/2); 
 	}
 	
 	
@@ -501,26 +537,14 @@ function runSplash(deltaTime){
 	if(splashTime <= 0){
 		gameState = STATE_GAME;
 	}
-	context.drawImage(background, 0, 0);
-	context.fillStyle = "black";
-	context.fillRect(0, SCREEN_HEIGHT/2 + 5, 1000, 33.5)
-	
 context.font="32px Franklin Gothic Medium Condensed";
 context.textAlign = "center";
-context.fillStyle = "GOLD";
-context.strokeStyle = "gold";
-
-
-context.fillText("A New Hope ft. Chuck Norris", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 30);
-context.strokeText("A New Hope ft. Chuck Norris", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 30);
-
-
+context.fillStyle = "Black";
+context.fillText("Jumpman", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 30);
 }
 
 var lifelosttime = 1;
 function runLifeLost(deltaTime){
-	context.drawImage(gameBackground, 0, 0);
-	
 	lifelosttime -= deltaTime; 
 	if(lifelosttime <= 0){
 		gameState = STATE_GAME;
@@ -529,15 +553,11 @@ function runLifeLost(deltaTime){
 		viewOffset.x = 0;
 		bullets.length = 0;
 	}
-	
 
-	context.fillStyle = "black";
-	context.fillRect(0, SCREEN_HEIGHT/2 - 33, 1000, 50)
-	
-	context.fillStyle = "gold";
+	context.fillStyle = "Black";
 	context.font = "32px Franklin";
 	context.textAling = "center"; 
-	context.fillText("Life Lost! Good Job!", SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+	context.fillText("Try Again, But Be Better! xD", SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
 }
 
 function music(){
@@ -559,6 +579,8 @@ isSfxPlaying = false;
 }
 } );
 }
+
+
 
 initialize();
 
