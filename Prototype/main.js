@@ -177,8 +177,33 @@ context.drawImage(tileset, sx, sy, TILESET_TILE, TILESET_TILE, x*TILE, (y-1)*TIL
 idx++;
 }
 }
+}}
+
+else if(level == 3){
+for(var layerIdx=0; layerIdx<LAYER_COUNT; layerIdx++)
+{
+	if(level3.layers[layerIdx].visible == false) continue;
+var idx = 0;
+for( var y = 0; y < level3.layers[layerIdx].height; y++ )
+{
+for( var x = 0; x < level3.layers[layerIdx].width; x++ )
+{
+if( level3.layers[layerIdx].data[idx] != 0 )
+{
+// the tiles in the Tiled map are base 1 (meaning a value of 0 means no tile), so subtract one from the tileset id to get the
+// correct tile
+var tileIndex = level3.layers[layerIdx].data[idx] - 1;
+var sx = TILESET_PADDING + (tileIndex % TILESET_COUNT_X) * (TILESET_TILE + TILESET_SPACING);
+var sy = TILESET_PADDING + (Math.floor(tileIndex / TILESET_COUNT_Y)) * (TILESET_TILE + TILESET_SPACING);
+context.drawImage(tileset, sx, sy, TILESET_TILE, TILESET_TILE, x*TILE, (y-1)*TILE, TILESET_TILE, TILESET_TILE);
+}
+idx++;
 }
 }
+}}
+
+
+
 }
 
 var musicBackround;
@@ -233,7 +258,36 @@ cells[layerIdx][y][x+1] = 1;
  idx++;
  }
  }
-	}}
+}}
+else if(level == 3){
+ for(var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++) { // initialize the collision map
+ cells[layerIdx] = [];
+ var idx = 0;
+ for(var y = 0; y < level3.layers[layerIdx].height; y++) {
+ cells[layerIdx][y] = [];
+ for(var x = 0; x < level3.layers[layerIdx].width; x++) {
+ if(level3.layers[layerIdx].data[idx] != 0) {
+ // for each tile we find in the layer data, we need to create 4 collisions
+ // (because our collision squares are 35x35 but the tile in the
+// level are 70x70)
+ cells[layerIdx][y][x] = 1;
+cells[layerIdx][y-1][x] = 1;
+cells[layerIdx][y-1][x+1] = 1;
+cells[layerIdx][y][x+1] = 1;
+ }
+ else if(cells[layerIdx][y][x] != 1) {
+// if we haven't set this cell's value, then set it to 0 now
+ cells[layerIdx][y][x] = 0;
+}
+ idx++;
+ }
+ }
+}}
+
+
+
+
+
 }
 
 function run()
@@ -462,14 +516,11 @@ context.font="14px Arial";
 context.fillText("FPS: " + fps, 30, 20, 100);
 context.fill();
 
-if(player.position.y > SCREEN_HEIGHT && player.lives > 1){
+if(player.position.y > SCREEN_HEIGHT){
 	player.lives -= 1;
 	gameState = STATE_LIFELOST;
 	player.position.set (0, 0);
 	viewOffset.x = 0;
-}
-else if(player.position.y > SCREEN_HEIGHT && player.lives == 1){
-	gameState = STATE_GAMEOVER;
 }
 }
 

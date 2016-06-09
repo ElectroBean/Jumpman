@@ -90,6 +90,26 @@ Player.prototype.update = function(deltaTime)
  if(jump == true && this.direction == RIGHT && this.sprite.currentAnimatoin != ANIM_JUMP_RIGHT){
 	 this.sprite.setAnimation(ANIM_JUMP_RIGHT);
  }
+ 
+ if(keyboard.isKeyDown(keyboard.KEY_1) == true){
+	 level = 1;
+	 initialize();
+	 player.position.set (0, 0);
+	
+ }
+ 
+ if(keyboard.isKeyDown(keyboard.KEY_2) == true){
+	 level = 2;
+	 initialize();
+	 player.position.set (0, 0);
+ }
+ 
+ if(keyboard.isKeyDown(keyboard.KEY_3) == true){
+	 level = 3;
+	 initialize();
+	 player.position.set (0, 0);
+ }
+ 
 
  var wasleft = this.velocity.x < 0;
  var wasright = this.velocity.x > 0;
@@ -234,8 +254,9 @@ initialize();
 player.position.set (0, 0);
 }
 else if(triggerAtTileCoord(LAYER_TRIGGERS, tx, ty) == true && level == 2){
-	gameState = STATE_GAMEOVER;
-	win = true;
+	level = 3;
+	initialize(); 
+	player.position.set (0, 0);
 }
 }
 
