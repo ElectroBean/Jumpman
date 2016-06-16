@@ -58,7 +58,8 @@ var LAYER_PLATFORMS = 1;
 var LAYER_DEATHONTOUCH = 2;
 var LAYER_TRIGGERS = 3;
 var LAYER_LADDERS = 4;
-var LAYER_MAX = 5; 
+var LAYER_POWERS = 5; 
+var LAYER_MAX = 6; 
 
 var MAP = {tw: level1.width, th: level1.height};
 var TILE = level1.tilewidth;
@@ -203,6 +204,28 @@ idx++;
 }
 }}
 
+else if(level == 4){
+for(var layerIdx=0; layerIdx<LAYER_COUNT; layerIdx++)
+{
+	if(level4.layers[layerIdx].visible == false) continue;
+var idx = 0;
+for( var y = 0; y < level4.layers[layerIdx].height; y++ )
+{
+for( var x = 0; x < level4.layers[layerIdx].width; x++ )
+{
+if( level4.layers[layerIdx].data[idx] != 0 )
+{
+// the tiles in the Tiled map are base 1 (meaning a value of 0 means no tile), so subtract one from the tileset id to get the
+// correct tile
+var tileIndex = level4.layers[layerIdx].data[idx] - 1;
+var sx = TILESET_PADDING + (tileIndex % TILESET_COUNT_X) * (TILESET_TILE + TILESET_SPACING);
+var sy = TILESET_PADDING + (Math.floor(tileIndex / TILESET_COUNT_X)) * (TILESET_TILE + TILESET_SPACING);
+context.drawImage(tileset, sx, sy, TILESET_TILE, TILESET_TILE, x*TILE, (y-1)*TILE, TILESET_TILE, TILESET_TILE);
+}
+idx++;
+}
+}
+}}
 
 
 }
@@ -285,7 +308,30 @@ cells[layerIdx][y][x+1] = 1;
  }
 }}
 
-
+else if(level == 4){
+ for(var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++) { // initialize the collision map
+ cells[layerIdx] = [];
+ var idx = 0;
+ for(var y = 0; y < level4.layers[layerIdx].height; y++) {
+ cells[layerIdx][y] = [];
+ for(var x = 0; x < level4.layers[layerIdx].width; x++) {
+ if(level4.layers[layerIdx].data[idx] != 0) {
+ // for each tile we find in the layer data, we need to create 4 collisions
+ // (because our collision squares are 35x35 but the tile in the
+// level are 70x70)
+ cells[layerIdx][y][x] = 1;
+cells[layerIdx][y-1][x] = 1;
+cells[layerIdx][y-1][x+1] = 1;
+cells[layerIdx][y][x+1] = 1;
+ }
+ else if(cells[layerIdx][y][x] != 1) {
+// if we haven't set this cell's value, then set it to 0 now
+ cells[layerIdx][y][x] = 0;
+}
+ idx++;
+ }
+ }
+}}
 
 
 

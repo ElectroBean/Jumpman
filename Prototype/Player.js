@@ -101,6 +101,11 @@ Player.prototype.update = function(deltaTime)
 	 player.position.set (0, 0);
  }
  
+ if(keyboard.isKeyDown(keyboard.KEY_4) == true){
+	 level = 4;
+	 initialize();
+	 player.position.set (0, 0);
+ }
 
  var wasleft = this.velocity.x < 0;
  var wasright = this.velocity.x > 0;
@@ -265,6 +270,36 @@ else if (keyboard.isKeyDown(keyboard.KEY_SHIFT) == true) {
 	this.climbing = false;
 } 
 ///////////////////////////////////////////////////////////////////////
+var tx = pixelToTile(this.position.x);
+var ty = pixelToTile(this.position.y);
+var nx = (this.position.x)%TILE; 
+var ny = (this.position.y)%TILE; 
+var cell = cellAtTileCoord(LAYER_POWERS, tx, ty);
+var cellright = cellAtTileCoord(LAYER_POWERS, tx + 1, ty);
+var celldown = cellAtTileCoord(LAYER_POWERS, tx, ty + 1);
+var celldiag = cellAtTileCoord(LAYER_POWERS, tx + 1, ty + 1);
+
+if ((celldown && !cell) || (celldiag && !cellright && nx)) {
+jumps += 1;
+
+}
+
+if ((cell && !celldown) || (cellright && !celldiag && nx)) {
+jumps += 1;
+
+}
+
+
+ if ((cellright && !cell) || (celldiag && !celldown && ny)) {
+jumps += 1;
+
+ }
+
+
+ if ((cell && !cellright) || (celldown && !celldiag && ny)) {
+jumps += 1;
+
+}
 
 ///////////////////////////////////////////////////////////////////////
 if(triggerAtTileCoord(LAYER_TRIGGERS, tx, ty) == true && level == 1)
@@ -278,6 +313,12 @@ else if(triggerAtTileCoord(LAYER_TRIGGERS, tx, ty) == true && level == 2){
 	initialize(); 
 	player.position.set (0, 0);
 }
+else if(triggerAtTileCoord(LAYER_TRIGGERS, tx, ty) == true && level == 3){
+	level = 4;
+	initialize(); 
+	player.position.set (0, 0);
+}
+
 }
 
 Player.prototype.draw = function()
