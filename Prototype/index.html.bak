@@ -1,0 +1,21 @@
+<html>
+  <body>
+    <canvas id="gameCanvas" width="640" height="480">
+          This text is displayed if your browser does not support HTML5.
+    </canvas>
+	<script src ="howler.js"></script>
+	<script src ="level1.js"></script>
+	<script src ="level2.js"></script>
+	<script src ="level3.js"></script>
+	<script src ="level4.js"></script>
+	<script src ="leveltest.js"></script>
+	<script src="usefullthings.js"></script>
+	<script src="vector2.js"></script>
+	<script src="sprite.js"></script>
+	<script src="keyboard.js"></script>
+	<script src="player.js"></script>
+	<script src="main.js"></script>
+	<p> San Holo sprite (added climbing animation): Blue Yeti Studios (http://gamejolt.com/profile/blue-yeti-studios/1276992) </p>
+	<p> METAL TileSet is by JaredVeatz (Jared Polidario) </p>
+  </body>
+  </html>
