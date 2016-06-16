@@ -83,7 +83,7 @@ var ENEMY_ACCEL = ENEMY_MAXDX * 2;
 var BOSS_MAXDX = METER * 5;
 var BOSS_ACCEL = BOSS_MAXDX * 2;
 var score = 0;
-
+var deaths = 0;
 var level = 1;
 
 function cellAtPixelCoord(layer, x,y)
@@ -557,10 +557,10 @@ fps = fpsCount;
 fpsCount = 0;
 }
 
-// draw the FPS
+
 context.fillStyle = "#FF0000";
 context.font="14px Arial";
-context.fillText("FPS: " + fps, 30, 20, 100);
+context.fillText("Times you have failed!   " + deaths, 100, 20);
 context.fill();
 
 if(player.position.y > SCREEN_HEIGHT){
@@ -652,6 +652,7 @@ function runLifeLost(deltaTime){
 		player.position.set (0, 0);
 		viewOffset.x = 0;
 		bullets.length = 0;
+		deaths += 1;
 	}
 
 	context.fillStyle = "Black";
