@@ -13,7 +13,7 @@ resizeCanvas();
 var startFrameMillis = Date.now();
 var endFrameMillis = Date.now();
 var background = new Image();
-background.src = "background.jpg";
+background.src = "tilesetOpenGameBackground.png";
 
 
 function getDeltaTime()
@@ -367,7 +367,7 @@ var viewOffset = new Vector2();
 
 function runGame(deltaTime){
 	//asdasd	
-	
+	context.drawImage(background, 0, 0);
 
 context.save();
 
@@ -575,7 +575,7 @@ var win = false;
 var firstGameOver = true; 
 var gotHighScore = false;
 function runGameOver(){
-	
+	context.drawImage(background, 0, 0);
 	if(firstGameOver == true){
 		firstGameOver = false; 
 		if(score >= highscore){
@@ -631,6 +631,7 @@ function runGameOver(){
 
 var splashTime = 3; 
 function runSplash(deltaTime){
+	context.drawImage(background, 0, 0);
 	splashTime -= deltaTime;
 	if(splashTime <= 0){
 		gameState = STATE_GAME;
@@ -643,6 +644,7 @@ context.fillText("Jumpman", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 30);
 
 var lifelosttime = 1;
 function runLifeLost(deltaTime){
+	context.drawImage(background, 0, 0);
 	lifelosttime -= deltaTime; 
 	if(lifelosttime <= 0){
 		gameState = STATE_GAME;
@@ -655,7 +657,7 @@ function runLifeLost(deltaTime){
 	context.fillStyle = "Black";
 	context.font = "32px Franklin";
 	context.textAling = "center"; 
-	context.fillText("Try Again, But Be Better! xD", SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+	context.fillText("Git Guud, scrub xD", SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
 }
 
 function music(){
