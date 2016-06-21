@@ -9,6 +9,8 @@ for(var i=0; i<ANIM_MAX; i++)
 {
 this.sprite.setAnimationOffset(i, 0, 4);
 }
+
+this.offset = new Vector2(0, 0);
 	this.position = new Vector2();
 	this.width = 32;
 	this.height = 32;
@@ -103,6 +105,12 @@ Player.prototype.update = function(deltaTime)
  
  if(keyboard.isKeyDown(keyboard.KEY_4) == true){
 	 level = 4;
+	 initialize();
+	 player.position.set (0, 0);
+ }
+ 
+ if(keyboard.isKeyDown(keyboard.KEY_5) == true){
+	 level = 5;
 	 initialize();
 	 player.position.set (0, 0);
  }
