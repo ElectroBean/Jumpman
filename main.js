@@ -47,15 +47,15 @@ var fpsCount = 0;
 var fpsTime = 0;
 
 
-var MAP = {tw: level1.width, th: level1.height};
-var TILE = level1.tilewidth;
-var TILESET_TILE = level1.tilesets[0].tilewidth;
-var TILESET_PADDING = level1.tilesets[0].margin;
-var TILESET_SPACING = level1.tilesets[0].spacing;
-var TILESET_COUNT_X = level1.tilesets[0].columns;
-var TILESET_COUNT_Y = level1.tilesets[0].tilecount / TILESET_COUNT_X;
+var MAP = {tw: level5.width, th: level5.height};
+var TILE = level5.tilewidth;
+var TILESET_TILE = level5.tilesets[0].tilewidth;
+var TILESET_PADDING = level5.tilesets[0].margin;
+var TILESET_SPACING = level5.tilesets[0].spacing;
+var TILESET_COUNT_X = level5.tilesets[0].columns;
+var TILESET_COUNT_Y = level5.tilesets[0].tilecount / TILESET_COUNT_X;
 var tileset = document.createElement("img");
-tileset.src = level1.tilesets[0].image;
+tileset.src = level5.tilesets[0].image;
 
 
 var player = new Player();
@@ -64,7 +64,7 @@ var bullets = [];
 var enemies = [];
 var boss = [];
 
-var LAYER_COUNT = level1.layers.length;
+var LAYER_COUNT = level5.layers.length;
 var LAYER_BACKGROUND = 0
 var LAYER_PLATFORMS = 1;
 var LAYER_DEATHONTOUCH = 2;

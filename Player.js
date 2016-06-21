@@ -10,7 +10,7 @@ for(var i=0; i<ANIM_MAX; i++)
 this.sprite.setAnimationOffset(i, 0, 4);
 }
 
-this.offset = new Vector2(0, 0);
+this.offset = new Vector2();
 	this.position = new Vector2();
 	this.width = 32;
 	this.height = 32;
@@ -148,50 +148,57 @@ if ((wasleft && (this.velocity.x > 0)) || (wasright && (this.velocity.x < 0))) {
 this.velocity.x = 0;
 }
 
-var tx = pixelToTile(this.position.x);
-var ty = pixelToTile(this.position.y);
-var nx = (this.position.x)%TILE; // true if player overlaps right
-var ny = (this.position.y)%TILE; // true if player overlaps below
-var cell = cellAtTileCoord(LAYER_PLATFORMS, tx, ty);
-var cellright = cellAtTileCoord(LAYER_PLATFORMS, tx + 1, ty);
-var celldown = cellAtTileCoord(LAYER_PLATFORMS, tx, ty + 1);
-var celldiag = cellAtTileCoord(LAYER_PLATFORMS, tx + 1, ty + 1);
-
- if (this.velocity.y > 0) {
-if ((celldown && !cell) || (celldiag && !cellright && nx)) {
- this.position.y = tileToPixel(ty);
- this.velocity.y = 0; // stop downward velocity
- this.falling = false; // no longer falling
- this.jumping = false; // (or jumping)
- ny = 0; // no longer overlaps the cells below 
- jumps = 2; 
-}
- }
- else if (this.velocity.y < 0) {
-if ((cell && !celldown) || (cellright && !celldiag && nx)) {
- // clamp the y position to avoid jumping into platform above
- this.position.y = tileToPixel(ty + 1);
- this.velocity.y = 0; // stop upward velocity
- // player is no longer really in that cell, we clamped them to the cell below
- cell = celldown;
- cellright = celldiag; // (ditto)
- ny = 0; // player no longer overlaps the cells below
-}
-}
-if (this.velocity.x > 0) {
- if ((cellright && !cell) || (celldiag && !celldown && ny)) {
- // clamp the x position to avoid moving into the platform we just hit
- this.position.x = tileToPixel(tx);
- this.velocity.x = 0; // stop horizontal velocity
- }
-}
-else if (this.velocity.x < 0) {
- if ((cell && !cellright) || (celldown && !celldiag && ny)) {
-// clamp the x position to avoid moving into the platform we just hit
-this.position.x = tileToPixel(tx + 1);
-this.velocity.x = 0; // stop horizontal velocity
-}
-}
+	var position = this.position.copy();
+	position.add(this.offset);
+	
+	var tx = pixelToTile(position.x);
+	var ty = pixelToTile(position.y);
+	var platformsLayer = 1;
+	
+	if(this.velocity.y < 0)
+	{
+		var tx = pixelToTile(this.position.x + this.offset.x);
+		var ty = pixelToTile(this.position.y + (this.offset.y));
+		if(cellAtTileCoord(platformsLayer, tx, ty))
+		{
+			this.velocity.y = 0;
+			this.position.y = ty * TILE - this.offset.y;
+		}
+	}
+	else if(this.velocity.y > 0)
+	{
+		var tx = pixelToTile(this.position.x + this.offset.x);
+		var ty = pixelToTile(this.position.y + (this.offset.y) + TILE);
+		if(cellAtTileCoord(platformsLayer, tx, ty))
+		{
+			this.jumping = false;
+			this.falling = false;
+			this.velocity.y = 0;
+			this.position.y = ty * TILE - TILE - 1 - this.offset.y;
+			jumps = 2;
+		}
+	}
+	if(this.velocity.x < 0)
+	{
+		var tx = pixelToTile(this.position.x + (this.offset.x) - TILE);
+		var ty = pixelToTile(this.position.y + this.offset.y);
+		if(cellAtTileCoord(platformsLayer, tx, ty))
+		{
+			this.velocity.x = 0;
+			this.position.x = tx * TILE + TILE - this.offset.x;
+		}
+	}
+	else if(this.velocity.x > 0)
+	{
+		var tx = pixelToTile(this.position.x + (this.offset.x));
+		var ty = pixelToTile(this.position.y + this.offset.y);
+		if(cellAtTileCoord(platformsLayer, tx, ty))
+		{
+			this.velocity.x = 0;
+			this.position.x = tx * TILE - 1 - this.offset.x;
+		}
+	}
+	
 /////////////////////////////////////////////////////////////////////
 
 var tx = pixelToTile(this.position.x);
