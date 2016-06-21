@@ -3,9 +3,28 @@
   <head>
     <meta content="text/html; charset=UTF-8" http-equiv="content-type">
     <title>How to play</title>
-  </head>
-  <body>
+    <style type="text/css">
+#background {
+  background-color: #8ac3f4;
+}
+
+#Title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 200%;
+}
+
+#Links {
+  text-align: center;
+}
+
+</style></head>
+  <body id="background">
+    <p id="Title">How To Play</p>
+    <p id="Links"><a href="index.html">Back to the game!</a></p>
     <p><br>
     </p>
+    <p>Arrow keys for movement</p>
+    <p>Space to jump</p>
   </body>
 </html>

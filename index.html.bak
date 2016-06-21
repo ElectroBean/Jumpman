@@ -1,21 +1,58 @@
+<!DOCTYPE html>
 <html>
-  <body>
-    <canvas id="gameCanvas" width="640" height="480">
-          This text is displayed if your browser does not support HTML5.
-    </canvas>
-	<script src ="howler.js"></script>
-	<script src ="level1.js"></script>
-	<script src ="level2.js"></script>
-	<script src ="level3.js"></script>
-	<script src ="level4.js"></script>
-	<script src ="leveltest.js"></script>
-	<script src="usefullthings.js"></script>
-	<script src="vector2.js"></script>
-	<script src="sprite.js"></script>
-	<script src="keyboard.js"></script>
-	<script src="player.js"></script>
-	<script src="main.js"></script>
-	<p> San Holo sprite (added climbing animation): Blue Yeti Studios (http://gamejolt.com/profile/blue-yeti-studios/1276992) </p>
-	<p> METAL TileSet is by JaredVeatz (Jared Polidario) </p>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+    <title>Index</title>
+    <style type="text/css">
+#Title {
+  font-size: 200%;
+  font-weight: bold;
+  text-align: center;
+  font-style: italic;
+}
+
+#Links {
+  text-align: center;
+}
+
+canvas {
+  padding-left: 0px;
+  padding-right: 0px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  width: 1100px;
+}
+
+#background {
+  background-color: #8ac3f4;
+}
+
+</style></head>
+  <body id="background">
+    <p id="Title">Jumpman</p>
+    <p id="Links"><a href="How%20to%20play.html">How to play&nbsp; </a>&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; <a href="About.html">About
+        the developer </a></p>
+    <canvas id="gameCanvas" width="640" height="480"> This text is displayed if
+      your browser does not support HTML5. </canvas>
+    <script src="howler.js"></script>
+    <script src="level1.js"></script>
+    <script src="level2.js"></script>
+    <script src="level3.js"></script>
+    <script src="level4.js"></script>
+    <script src="leveltest.js"></script>
+    <script src="usefullthings.js"></script>
+    <script src="vector2.js"></script>
+    <script src="sprite.js"></script>
+    <script src="keyboard.js"></script>
+    <script src="player.js"></script>
+    <script src="main.js"></script>
+    <p> San Holo sprite (added climbing animation): Blue Yeti Studios
+      (http://gamejolt.com/profile/blue-yeti-studios/1276992) </p>
+    <p> METAL TileSet is by JaredVeatz (Jared Polidario) </p>
+    <p>Sky background: Created by Paulina Riva
+      (http://opengameart.org/content/sky-background)</p>
   </body>
-  </html>
+</html>

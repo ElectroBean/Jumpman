@@ -3,9 +3,14 @@
   <head>
     <meta content="text/html; charset=UTF-8" http-equiv="content-type">
     <title>About</title>
+    <style type="text/css">
+#background {
+  background-color: #8ac3f4;
+}
+
+</style>
   </head>
   <body>
-    <p><br>
-    </p>
+    <p>About the creator</p>
   </body>
 </html>

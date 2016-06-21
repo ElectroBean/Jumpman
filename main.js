@@ -13,7 +13,7 @@ resizeCanvas();
 var startFrameMillis = Date.now();
 var endFrameMillis = Date.now();
 var background = new Image();
-background.src = "background.jpg";
+background.src = "tilesetOpenGameBackground.png";
 
 
 function getDeltaTime()
@@ -46,6 +46,18 @@ var fps = 0;
 var fpsCount = 0;
 var fpsTime = 0;
 
+
+var MAP = {tw: level1.width, th: level1.height};
+var TILE = level1.tilewidth;
+var TILESET_TILE = level1.tilesets[0].tilewidth;
+var TILESET_PADDING = level1.tilesets[0].margin;
+var TILESET_SPACING = level1.tilesets[0].spacing;
+var TILESET_COUNT_X = level1.tilesets[0].columns;
+var TILESET_COUNT_Y = level1.tilesets[0].tilecount / TILESET_COUNT_X;
+var tileset = document.createElement("img");
+tileset.src = level1.tilesets[0].image;
+
+
 var player = new Player();
 var keyboard = new Keyboard();
 var bullets = [];
@@ -61,16 +73,6 @@ var LAYER_LADDERS = 4;
 var LAYER_POWERS = 5; 
 var LAYER_MAX = 6; 
 
-var MAP = {tw: level1.width, th: level1.height};
-var TILE = level1.tilewidth;
-var TILESET_TILE = level1.tilesets[0].tilewidth;
-var TILESET_PADDING = level1.tilesets[0].margin;
-var TILESET_SPACING = level1.tilesets[0].spacing;
-var TILESET_COUNT_X = level1.tilesets[0].columns;
-var TILESET_COUNT_Y = level1.tilesets[0].tilecount / TILESET_COUNT_X;
-var tileset = document.createElement("img");
-tileset.src = level1.tilesets[0].image;
-
 var METER = TILE;
 var GRAVITY = METER * 9.8 * 4;
 var MAXDX = METER * 10;
@@ -83,7 +85,7 @@ var ENEMY_ACCEL = ENEMY_MAXDX * 2;
 var BOSS_MAXDX = METER * 5;
 var BOSS_ACCEL = BOSS_MAXDX * 2;
 var score = 0;
-
+var deaths = 0;
 var level = 1;
 
 function cellAtPixelCoord(layer, x,y)
@@ -227,6 +229,28 @@ idx++;
 }
 }}
 
+else if(level == 5){
+for(var layerIdx=0; layerIdx<LAYER_COUNT; layerIdx++)
+{
+	if(level5.layers[layerIdx].visible == false) continue;
+var idx = 0;
+for( var y = 0; y < level5.layers[layerIdx].height; y++ )
+{
+for( var x = 0; x < level5.layers[layerIdx].width; x++ )
+{
+if( level5.layers[layerIdx].data[idx] != 0 )
+{
+// the tiles in the Tiled map are base 1 (meaning a value of 0 means no tile), so subtract one from the tileset id to get the
+// correct tile
+var tileIndex = level5.layers[layerIdx].data[idx] - 1;
+var sx = TILESET_PADDING + (tileIndex % TILESET_COUNT_X) * (TILESET_TILE + TILESET_SPACING);
+var sy = TILESET_PADDING + (Math.floor(tileIndex / TILESET_COUNT_X)) * (TILESET_TILE + TILESET_SPACING);
+context.drawImage(tileset, sx, sy, TILESET_TILE, TILESET_TILE, x*TILE, (y-1)*TILE, TILESET_TILE, TILESET_TILE);
+}
+idx++;
+}
+}
+}}
 
 }
 
@@ -235,6 +259,7 @@ var sfxFire;
 
 var cells = []; // the array that holds our simplified collision data
 function initialize() {
+	
 	if(level == 1){
  for(var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++) { // initialize the collision map
  cells[layerIdx] = [];
@@ -333,6 +358,31 @@ cells[layerIdx][y][x+1] = 1;
  }
 }}
 
+else if(level == 5){
+ for(var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++) { // initialize the collision map
+ cells[layerIdx] = [];
+ var idx = 0;
+ for(var y = 0; y < level5.layers[layerIdx].height; y++) {
+ cells[layerIdx][y] = [];
+ for(var x = 0; x < level5.layers[layerIdx].width; x++) {
+ if(level5.layers[layerIdx].data[idx] != 0) {
+ // for each tile we find in the layer data, we need to create 4 collisions
+ // (because our collision squares are 35x35 but the tile in the
+// level are 70x70)
+cells[layerIdx][y][x] = 1;
+cells[layerIdx][y-1][x] = 1;
+cells[layerIdx][y-1][x+1] = 1;
+cells[layerIdx][y][x+1] = 1;
+ }
+ else if(cells[layerIdx][y][x] != 1) {
+// if we haven't set this cell's value, then set it to 0 now
+ cells[layerIdx][y][x] = 0;
+}
+ idx++;
+ }
+ }
+}}
+
 
 
 }
@@ -367,7 +417,7 @@ var viewOffset = new Vector2();
 
 function runGame(deltaTime){
 	//asdasd	
-	
+	context.drawImage(background, 0, 0);
 
 context.save();
 
@@ -557,10 +607,10 @@ fps = fpsCount;
 fpsCount = 0;
 }
 
-// draw the FPS
+
 context.fillStyle = "#FF0000";
 context.font="14px Arial";
-context.fillText("FPS: " + fps, 30, 20, 100);
+context.fillText("Times you have failed!   " + deaths, 100, 20);
 context.fill();
 
 if(player.position.y > SCREEN_HEIGHT){
@@ -575,7 +625,7 @@ var win = false;
 var firstGameOver = true; 
 var gotHighScore = false;
 function runGameOver(){
-	
+	context.drawImage(background, 0, 0);
 	if(firstGameOver == true){
 		firstGameOver = false; 
 		if(score >= highscore){
@@ -631,6 +681,7 @@ function runGameOver(){
 
 var splashTime = 3; 
 function runSplash(deltaTime){
+	context.drawImage(background, 0, 0);
 	splashTime -= deltaTime;
 	if(splashTime <= 0){
 		gameState = STATE_GAME;
@@ -643,6 +694,7 @@ context.fillText("Jumpman", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 30);
 
 var lifelosttime = 1;
 function runLifeLost(deltaTime){
+	context.drawImage(background, 0, 0);
 	lifelosttime -= deltaTime; 
 	if(lifelosttime <= 0){
 		gameState = STATE_GAME;
@@ -650,12 +702,13 @@ function runLifeLost(deltaTime){
 		player.position.set (0, 0);
 		viewOffset.x = 0;
 		bullets.length = 0;
+		deaths += 1;
 	}
 
 	context.fillStyle = "Black";
 	context.font = "32px Franklin";
 	context.textAling = "center"; 
-	context.fillText("Try Again, But Be Better! xD", SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+	context.fillText("Git Guud, scrub xD", SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
 }
 
 function music(){
